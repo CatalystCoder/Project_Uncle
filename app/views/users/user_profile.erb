@@ -1,0 +1,176 @@
+
+
+<div class="container">
+
+
+
+
+  <div>
+      <ul class="nav nav-pills">
+      <li>
+        <a href="/user/list">
+          <span class="icon icon-users"></span>
+          List of Users
+        </a>
+      </li>
+      <% if @user.id == session["user_id"]%>
+      <li>
+        <a href="/user/update">
+          <span class="icon icon-cog"></span>
+          Update Settings
+        </a>
+      </li>
+      <% end %>
+
+      <% if @user.id != session["user_id"]%>
+      <li>
+      <a href="/user/profile/<%=session["user_id"]%>">
+          <span class="icon icon-cog"></span>
+          Back to my profile
+        </a>
+      </li>
+      <% end %>
+
+
+      <li>
+        <a href="/">
+          <span class="icon icon-home"></span>
+          Home
+        </a>
+      </li>
+      <li>
+        <a href="/logout">
+          <span class="icon icon-logout"></span>
+          Logout
+        </a>
+      </li>
+    </ul>
+  </div>  
+
+
+     </div>
+
+
+  <div class="block text-center">
+  <h1 class="block-title"><%= @user.first_name %> 
+      <%= @user.last_name %></h1>
+      <% if @user.debt_amount != 0 || nil %>
+    <h3 class="block-title">$<%= @user.debt_amount %></h3>
+      <h4 class="text-muted">Still Needed</h4>
+      <% end %>
+      <% if @user.id != session["user_id"]%>
+      <div>
+  <a href="/investments/invest/<%= @user.id %>">
+    <button class="btn btn-primary m-t">Donate Now</button></a>
+  </div>
+  <%end%>
+      
+  </div>
+  
+
+ 
+
+
+  <div class="container">
+
+  <div>
+
+  <form action="/update/create" method="post">
+      <div class="input-group">
+        <input type="text" class="form-control" name="status_update" placeholder="Update status...">
+        <span class="input-group-btn">
+          <input type="submit" value="Post New Status" class="btn btn-primary">
+        </span>
+      </div>
+    </form> 
+
+  </div>
+
+
+
+ <%if @status_updates_time != [] %>
+    <h3><%= @user_presenter.status_updates_header(session["user_id"]) %></h3>
+      <%@status_updates_time.each do |s|%>
+
+    <div class="callout">
+    <div class="callout-content">
+      <strong><%= s.status_update%></strong>
+      <br>
+      <%= s.posted_ago %>
+    </div>
+
+    <div class="callout-secondary">
+    <% if @user.id == session["user_id"]%>
+      <form action = "/update/edit/<%=s.id%>" method = "post">
+        <input type = "submit" value = "Edit" class="btn btn-primary">
+      </form>
+    </div>
+    <% end %>
+  </div>
+    <% end %>
+    <% end %>
+
+   
+    <h3>Donations Received:</h3>
+    <% @donations_received.each do |d| %>
+    <div class="callout">
+    <div class="callout-content">
+      <strong>$<%= d.amount %>0</strong> <a href="/user/profile/<%= d.access_investor.id %>"><%= d.access_investor.first_name %> <%= d.access_investor.last_name %></a>
+    </div>
+    <% if d.paid == nil || d.paid == false %>
+    <div class="callout-secondary">
+    <form action="/investments/<%= d.id %>/update/paid" method="post">
+      <button class="btn btn-sm btn-info">Mark as Paid</button></form>
+    </div>
+    <% elsif d.paid == true %>
+    <div class="callout-secondary">
+      <button class="btn btn-sm btn-info">PAID</button>
+    </div>
+    <% end %>
+  </div>
+   <% end %>
+    
+ 
+    
+<% if @investments != [] %>
+  <h3> Your Recent Donations:</h3>
+  <% @investments.each do |i| %>
+  <div class="callout">
+    <div class="callout-content">
+      <strong>$<%= i.amount %>0</strong>. <a href="/user/profile/<%= i.access_student.id %>"><%= i.access_student.first_name %> <%= i.access_student.last_name %></a>
+    </div>
+
+    <div class="callout-secondary">
+    <a href="/user/profile/<%= i.access_student.id %>">
+      <button class="btn btn-sm btn-info">See Profile</button></a>
+    </div>
+  </div>
+   <% end %>
+  <% end %>
+
+
+
+ 
+  </div>
+
+
+
+  </div>
+
+  
+
+ 
+
+
+<!-- DONATE BUTTON SHOULD GO IN THE TOP RIGHT CORNER
+ -->  
+
+<!-- BACK TO MY PROFILE BUTTON IN TOP RIGHT CORNER
+ -->  
+
+
+
+ 
+   
+  
+
